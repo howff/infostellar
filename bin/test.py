@@ -62,9 +62,10 @@ def run():
     nanos = int((now - seconds) * 10**9)
     timestamp_after = Timestamp(seconds=seconds, nanos=nanos)
 
-    listreq = stellarstation_pb2.ListPlansRequest()
-    listreq.satellite_id = str(SATELLITE_ID)
-
+    # Create a ListPlansRequest
+    #listreq = stellarstation_pb2.ListPlansRequest()
+    #listreq.satellite_id = str(SATELLITE_ID)
+    # None of these work:
     #listreq.aos_before = Timestamp(timestamp_before) # TypeError: No positional arguments allowed
     #listreq.aos_before = timestamp_before # AttributeError: Assignment not allowed to field "aos_before" in protocol message object.
     #listreq.aos_before.seconds = 0 
@@ -72,10 +73,14 @@ def run():
     #listreq.aos_before = timestamp_before # TypeError: Can't set composite field (when done AFTER setting seconds manually above)
     #listreq.aos_after = timestamp_after
     #listreq.aos_before = copy.deepcopy(timestamp_before) # AttributeError: Assignment not allowed to field "aos_before" in protocol message object.
+    # This works:
+    listreq = stellarstation_pb2.ListPlansRequest(satellite_id = str(SATELLITE_ID),
+        aos_before = timestamp_before, aos_after = timestamp_after)
 
     print("Got listreq:")
     pprint(listreq)
 
+    print("Sending ListPlans request:")
     client.ListPlans(listreq)
     print("Done ListPlans")
 
